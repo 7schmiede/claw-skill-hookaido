@@ -2,6 +2,38 @@
 
 Use this file for concrete command syntax and request payloads.
 
+## Install Hookaido
+
+Preferred in OpenClaw:
+
+- Use one of the skill installer actions from `metadata.openclaw.install` (platform + architecture specific download).
+- Choose the artifact that matches your host architecture (`amd64` or `arm64`).
+- The OpenClaw download URLs are currently pinned to Hookaido `v1.2.0`.
+- macOS/Linux download installers extract to `~/.local/bin` (with `stripComponents: 1`).
+- Windows download installers extract to `~/.openclaw/tools/hookaido`.
+
+Direct CLI fallback:
+
+```bash
+go install github.com/nuetzliches/hookaido/cmd/hookaido@latest
+```
+
+Release-binary fallback from this skill folder:
+
+```bash
+bash {baseDir}/scripts/install_hookaido.sh
+```
+
+Optional pins/overrides for the installer script:
+
+```bash
+# Pin version (example)
+HOOKAIDO_VERSION=v1.2.0 bash {baseDir}/scripts/install_hookaido.sh
+
+# Custom install location
+HOOKAIDO_INSTALL_DIR="$HOME/bin" bash {baseDir}/scripts/install_hookaido.sh
+```
+
 ## Core CLI Commands
 
 ```bash

@@ -1,6 +1,7 @@
 ---
 name: hookaido
 description: Create, review, and operate Hookaido webhook queue setups. Use when tasks involve Hookaidofile authoring, `hookaido` CLI commands (`run`, `config fmt`, `config validate`, `mcp serve`), pull-mode consumers (`dequeue`/`ack`/`nack`/`extend`), Admin API queue triage (health, backlog, DLQ), or production hardening for Hookaido ingress and delivery.
+metadata: {"openclaw":{"homepage":"https://github.com/nuetzliches/hookaido","requires":{"bins":["hookaido"]},"install":[{"id":"download-darwin-amd64","kind":"download","os":["darwin"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v1.2.0/hookaido_v1.2.0_darwin_amd64.tar.gz","archive":"tar.gz","extract":true,"stripComponents":1,"targetDir":"~/.local/bin","bins":["hookaido"],"label":"Download hookaido v1.2.0 (macOS amd64)"},{"id":"download-darwin-arm64","kind":"download","os":["darwin"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v1.2.0/hookaido_v1.2.0_darwin_arm64.tar.gz","archive":"tar.gz","extract":true,"stripComponents":1,"targetDir":"~/.local/bin","bins":["hookaido"],"label":"Download hookaido v1.2.0 (macOS arm64)"},{"id":"download-linux-amd64","kind":"download","os":["linux"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v1.2.0/hookaido_v1.2.0_linux_amd64.tar.gz","archive":"tar.gz","extract":true,"stripComponents":1,"targetDir":"~/.local/bin","bins":["hookaido"],"label":"Download hookaido v1.2.0 (Linux amd64)"},{"id":"download-linux-arm64","kind":"download","os":["linux"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v1.2.0/hookaido_v1.2.0_linux_arm64.tar.gz","archive":"tar.gz","extract":true,"stripComponents":1,"targetDir":"~/.local/bin","bins":["hookaido"],"label":"Download hookaido v1.2.0 (Linux arm64)"},{"id":"download-windows-amd64","kind":"download","os":["win32"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v1.2.0/hookaido_v1.2.0_windows_amd64.zip","archive":"zip","extract":true,"targetDir":"~/.openclaw/tools/hookaido","bins":["hookaido"],"label":"Download hookaido v1.2.0 (Windows amd64)"},{"id":"download-windows-arm64","kind":"download","os":["win32"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v1.2.0/hookaido_v1.2.0_windows_arm64.zip","archive":"zip","extract":true,"targetDir":"~/.openclaw/tools/hookaido","bins":["hookaido"],"label":"Download hookaido v1.2.0 (Windows arm64)"}]}}
 ---
 
 # Hookaido
@@ -13,17 +14,20 @@ Use conservative, reversible changes and validate before runtime operations.
 ## Workflow
 
 1. Confirm target topology: pull mode, push mode, outbound-only, or internal queue.
-2. Inspect and update `Hookaidofile` minimally.
-3. Run format and validation before starting or reloading:
+2. Ensure `hookaido` binary exists on PATH.
+   - Preferred in OpenClaw: use the install action from `metadata.openclaw.install`.
+   - Fallback: run `bash {baseDir}/scripts/install_hookaido.sh` to install from GitHub Releases.
+3. Inspect and update `Hookaidofile` minimally.
+4. Run format and validation before starting or reloading:
    - `hookaido config fmt --config ./Hookaidofile`
    - `hookaido config validate --config ./Hookaidofile`
-4. Start runtime and verify health:
+5. Start runtime and verify health:
    - `hookaido run --config ./Hookaidofile --db ./.data/hookaido.db`
    - `curl http://127.0.0.1:2019/healthz?details=1`
-5. Validate end-to-end behavior:
+6. Validate end-to-end behavior:
    - ingress request accepted and queued
    - consumer dequeue and `ack`/`nack` path works
-6. For incidents, inspect backlog and DLQ first, then mutate.
+7. For incidents, inspect backlog and DLQ first, then mutate.
 
 ## Task Playbooks
 
