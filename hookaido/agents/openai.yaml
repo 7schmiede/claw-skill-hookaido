@@ -1,0 +1,4 @@
+interface:
+  display_name: "Hookaido Operator"
+  short_description: "Operate Hookaido queues, config, and diagnostics"
+  default_prompt: "Use this skill to configure, validate, run, and operate Hookaido."
