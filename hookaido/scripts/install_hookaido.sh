@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo="nuetzliches/hookaido"
-default_tag="v1.3"
+default_tag="v1.4.0"
 
 detect_os() {
   case "$(uname -s)" in
@@ -71,12 +71,12 @@ hash_file_sha256() {
 
 expected_sha_for_pinned_artifact() {
   case "$1" in
-    "hookaido_v1.3_darwin_amd64.tar.gz") echo "0a601f38233d404674f45de4e2e8bbcc7331712dd1fe4820ba78c708e38fa55e" ;;
-    "hookaido_v1.3_darwin_arm64.tar.gz") echo "667462d378d96c5e8f69afc53e4dddd911675e1f7de2fc8a3790d514c49f6d14" ;;
-    "hookaido_v1.3_linux_amd64.tar.gz") echo "d917a2a7f4fe30ca8ccb8bbf9df499abbbfce914e538b4b2675eeec37561036c" ;;
-    "hookaido_v1.3_linux_arm64.tar.gz") echo "f8483bf14e37b9fcbc7f018b33b5ae3537a21d920803093ba856dfc0ac97c998" ;;
-    "hookaido_v1.3_windows_amd64.zip") echo "f6755741f93992e171a2ff7a09c047204b0a9450a0b39b07afbe4af8f2059b89" ;;
-    "hookaido_v1.3_windows_arm64.zip") echo "ee5332d6a92024405de90466c646a15fb2b928c03343c8dabfc0f4a7267d6124" ;;
+    "hookaido_v1.4.0_darwin_amd64.tar.gz") echo "1d148ed4ce724d9c11e38aa9104f66663e070dab35160b1eb032fd220d47976f" ;;
+    "hookaido_v1.4.0_darwin_arm64.tar.gz") echo "15b7f163dbf0c22e4f3242a28f824bef436fe498eb20c02485aba6e948c46e8e" ;;
+    "hookaido_v1.4.0_linux_amd64.tar.gz") echo "b591aeb826e3190cedda254c8d37206b84034eb863a3ee5093b804d90e253966" ;;
+    "hookaido_v1.4.0_linux_arm64.tar.gz") echo "d0e63f4cf8a5ad0db5ffb7e0ed44eec49d5a9282ab3e43808c0558b02732d415" ;;
+    "hookaido_v1.4.0_windows_amd64.zip") echo "4af9340a8fdf30b9a6c2af54c6cf25370e8bc9aa7414383eaecbf66d23253ca9" ;;
+    "hookaido_v1.4.0_windows_arm64.zip") echo "cbffb22d36d0ae5e7dbb543480432ed4c29164e6402d45dc6bec9f9176f1fcde" ;;
     *)
       echo "No pinned checksum available for artifact: $1" >&2
       exit 1
