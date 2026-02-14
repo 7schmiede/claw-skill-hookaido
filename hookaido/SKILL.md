@@ -14,9 +14,11 @@ Use conservative, reversible changes and validate before runtime operations.
 ## Workflow
 
 1. Confirm target topology: pull mode, push mode, outbound-only, or internal queue.
-2. Ensure `hookaido` binary exists on PATH.
-   - Preferred in OpenClaw: use the install action from `metadata.openclaw.install`.
-   - Fallback: run `bash {baseDir}/scripts/install_hookaido.sh` to install from GitHub Releases.
+2. Choose runtime mode and ensure `hookaido` exists where tools execute.
+   - Host-binary mode: use the install action from `metadata.openclaw.install`.
+   - Host fallback: run `bash {baseDir}/scripts/install_hookaido.sh` (pinned `v1.2.0`, SHA256-verified).
+   - Docker-sandbox mode: use a sandbox image that already includes `hookaido` (preferred), or install inside sandbox via `agents.defaults.sandbox.docker.setupCommand`.
+   - Keep host install actions available as fallback and to satisfy `metadata.openclaw.requires.bins`.
 3. Inspect and update `Hookaidofile` minimally.
 4. Run format and validation before starting or reloading:
    - `hookaido config fmt --config ./Hookaidofile`

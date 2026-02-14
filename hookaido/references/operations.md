@@ -4,18 +4,20 @@ Use this file for concrete command syntax and request payloads.
 
 ## Install Hookaido
 
-Preferred in OpenClaw:
+OpenClaw supports two runtime variants.
+
+### Variant A: Host Binary (Gateway/Host)
 
 - Use one of the skill installer actions from `metadata.openclaw.install` (platform + architecture specific download).
 - Choose the artifact that matches your host architecture (`amd64` or `arm64`).
-- The OpenClaw download URLs are currently pinned to Hookaido `v1.2.0`.
-- macOS/Linux download installers extract to `~/.local/bin` (with `stripComponents: 1`).
-- Windows download installers extract to `~/.openclaw/tools/hookaido`.
+- The OpenClaw download URLs are pinned to Hookaido `v1.2.0`.
+- macOS/Linux installers extract to `~/.local/bin` (with `stripComponents: 1`).
+- Windows installers extract to `~/.openclaw/tools/hookaido`.
 
 Direct CLI fallback:
 
 ```bash
-go install github.com/nuetzliches/hookaido/cmd/hookaido@latest
+go install github.com/nuetzliches/hookaido/cmd/hookaido@v1.2.0
 ```
 
 Release-binary fallback from this skill folder:
@@ -24,15 +26,29 @@ Release-binary fallback from this skill folder:
 bash {baseDir}/scripts/install_hookaido.sh
 ```
 
+The fallback installer is hardened:
+
+- Defaults to pinned `v1.2.0` (no dynamic `latest` lookup).
+- Verifies SHA256 of the downloaded release artifact before extraction/install.
+
 Optional pins/overrides for the installer script:
 
 ```bash
-# Pin version (example)
-HOOKAIDO_VERSION=v1.2.0 bash {baseDir}/scripts/install_hookaido.sh
-
-# Custom install location
+# Default pinned install, custom location
 HOOKAIDO_INSTALL_DIR="$HOME/bin" bash {baseDir}/scripts/install_hookaido.sh
+
+# Non-default release requires explicit checksum
+HOOKAIDO_VERSION=v1.2.1 \
+HOOKAIDO_SHA256="<artifact-sha256>" \
+bash {baseDir}/scripts/install_hookaido.sh
 ```
+
+### Variant B: Docker Sandbox
+
+- OpenClaw supports Docker sandbox mode via `sandboxing.enabled: true` and `sandboxing.type: docker`.
+- Preferred: provide a custom sandbox image with `hookaido` preinstalled, and pin the image by immutable digest.
+- Optional: use `agents.defaults.sandbox.docker.setupCommand` to install `hookaido` inside the container at startup.
+- Keep `metadata.openclaw.install` as fallback and for `metadata.openclaw.requires.bins` checks on the host.
 
 ## Core CLI Commands
 
