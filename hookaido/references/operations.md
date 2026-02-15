@@ -10,14 +10,14 @@ OpenClaw supports two runtime variants.
 
 - Use one of the skill installer actions from `metadata.openclaw.install` (platform + architecture specific download).
 - Choose the artifact that matches your host architecture (`amd64` or `arm64`).
-- The OpenClaw download URLs are pinned to Hookaido `v1.4.0`.
+- The OpenClaw download URLs are pinned to Hookaido `v1.5.0`.
 - macOS/Linux installers extract to `~/.local/bin` (with `stripComponents: 1`).
 - Windows installers extract to `~/.openclaw/tools/hookaido`.
 
 Direct CLI fallback:
 
 ```bash
-go install github.com/nuetzliches/hookaido/cmd/hookaido@v1.4.0
+go install github.com/nuetzliches/hookaido/cmd/hookaido@v1.5.0
 ```
 
 Release-binary fallback from this skill folder:
@@ -28,7 +28,7 @@ bash {baseDir}/scripts/install_hookaido.sh
 
 The fallback installer is hardened:
 
-- Defaults to pinned `v1.4.0` (no dynamic `latest` lookup).
+- Defaults to pinned `v1.5.0` (no dynamic `latest` lookup).
 - Verifies SHA256 of the downloaded release artifact before extraction/install.
 
 Optional pins/overrides for the installer script:
