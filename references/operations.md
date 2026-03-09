@@ -6,18 +6,23 @@ Use this file for concrete command syntax and request payloads.
 
 OpenClaw supports two runtime variants.
 
+Public repositories:
+
+- Upstream project: `https://github.com/nuetzliches/hookaido`
+- Public skill repo: `https://github.com/7schmiede/claw-skill-hookaido`
+
 ### Variant A: Host Binary (Gateway/Host)
 
 - Use one of the skill installer actions from `metadata.openclaw.install` (platform + architecture specific download).
 - Choose the artifact that matches your host architecture (`amd64` or `arm64`).
-- The OpenClaw download URLs are pinned to Hookaido `v1.5.0`.
+- The OpenClaw download URLs are pinned to Hookaido `v2.0.0`.
 - macOS/Linux installers extract to `~/.local/bin` (with `stripComponents: 1`).
 - Windows installers extract to `~/.openclaw/tools/hookaido`.
 
 Direct CLI fallback:
 
 ```bash
-go install github.com/nuetzliches/hookaido/cmd/hookaido@v1.5.0
+go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.0.0
 ```
 
 Release-binary fallback from this skill folder:
@@ -28,7 +33,7 @@ bash {baseDir}/scripts/install_hookaido.sh
 
 The fallback installer is hardened:
 
-- Defaults to pinned `v1.5.0` (no dynamic `latest` lookup).
+- Defaults to pinned `v2.0.0` (no dynamic `latest` lookup).
 - Verifies SHA256 of the downloaded release artifact before extraction/install.
 
 Optional pins/overrides for the installer script:
@@ -38,7 +43,7 @@ Optional pins/overrides for the installer script:
 HOOKAIDO_INSTALL_DIR="$HOME/bin" bash {baseDir}/scripts/install_hookaido.sh
 
 # Non-default release requires explicit checksum
-HOOKAIDO_VERSION=v1.4.1 \
+HOOKAIDO_VERSION=v2.0.1 \
 HOOKAIDO_SHA256="<artifact-sha256>" \
 bash {baseDir}/scripts/install_hookaido.sh
 ```
@@ -56,15 +61,25 @@ bash {baseDir}/scripts/install_hookaido.sh
 # Validate and format config
 hookaido config fmt --config ./Hookaidofile
 hookaido config validate --config ./Hookaidofile
+hookaido config validate --config ./Hookaidofile --strict-secrets
 
 # Start runtime
 hookaido run --config ./Hookaidofile --db ./.data/hookaido.db
+
+# Start runtime with Postgres queue backend
+hookaido run --config ./Hookaidofile --postgres-dsn "$HOOKAIDO_POSTGRES_DSN"
 
 # Start runtime with live config watch
 hookaido run --config ./Hookaidofile --db ./.data/hookaido.db --watch
 
 # Start MCP server (read-only)
 hookaido mcp serve --config ./Hookaidofile --db ./.data/hookaido.db --role read
+
+# Verify a public release bundle before rollout
+hookaido verify-release \
+  --checksums ./hookaido_v2.0.0_checksums.txt \
+  --public-key ./hookaido_v2.0.0_checksums.txt.pub.pem \
+  --require-provenance
 ```
 
 ## Minimal Pull-Mode Config
@@ -102,6 +117,12 @@ curl -sS -X POST "http://localhost:9443/pull/github/ack" \
   -H "Content-Type: application/json" \
   -d '{"lease_id":"lease_xyz"}'
 
+# Batch ack (v2.0.0+)
+curl -sS -X POST "http://localhost:9443/pull/github/ack" \
+  -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"lease_ids":["lease_a","lease_b"]}'
+
 # Nack (requeue with delay)
 curl -sS -X POST "http://localhost:9443/pull/github/nack" \
   -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN" \
@@ -113,6 +134,12 @@ curl -sS -X POST "http://localhost:9443/pull/github/extend" \
   -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"lease_id":"lease_xyz","lease_ttl":"30s"}'
+
+# Batch nack (v2.0.0+)
+curl -sS -X POST "http://localhost:9443/pull/github/nack" \
+  -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"lease_ids":["lease_a","lease_b"],"delay":"5s","dead":false}'
 ```
 
 ## Optional gRPC Pull-Worker Mode (`v1.4.0+`)
@@ -143,6 +170,26 @@ Notes:
 - Worker gRPC reuses pull token auth and pull endpoint routing.
 - Keep `grpc_listen` on a dedicated internal listener; do not share ingress/pull/admin/metrics ports.
 - Worker lease operations are intentionally outside MCP scope.
+
+## Queue Backend Modes
+
+```hcl
+# Default durable mode
+queue sqlite
+
+# Ephemeral development/testing mode
+queue memory
+
+# Shared database mode (v2.0.0+)
+queue postgres
+```
+
+Postgres runtime wiring:
+
+```bash
+export HOOKAIDO_POSTGRES_DSN='postgres://user:pass@db.internal/hookaido?sslmode=require'
+hookaido run --config ./Hookaidofile --postgres-dsn "$HOOKAIDO_POSTGRES_DSN"
+```
 
 ## Admin API Reads
 
