@@ -1,6 +1,6 @@
 ---
 name: hookaido
-version: "2.2.0"
+version: "2.2.1"
 description: >-
   Receive incoming webhooks from external services and trigger automations,
   integrations, and event-driven workflows. Operate inbound/outbound/internal
