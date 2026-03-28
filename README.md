@@ -1,6 +1,6 @@
-# claw-skill-hookaido
+# hookaido
 
-Public OpenClaw skill repository for Hookaido.
+Public OpenClaw skill for [Hookaido](https://github.com/nuetzliches/hookaido) — webhook infrastructure that just works.
 
 Repository link for skill distribution:
 

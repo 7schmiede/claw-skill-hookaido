@@ -1,7 +1,104 @@
 ---
-name: claw-skill-hookaido
-description: Receive incoming webhooks from external services and trigger automations, integrations, and event-driven workflows. Operate inbound/outbound/internal webhook flows with Hookaido v2, queue triage, MCP workflows, release verification, subprocess delivery (`deliver exec`), and HTTP/gRPC pull workers. Use when tasks involve Hookaidofile authoring, queue backend selection (`sqlite`, `memory`, `postgres`), `hookaido` CLI commands (`run`, `config fmt`, `config validate`, `mcp serve`), pull operations (`dequeue`/`ack`/`nack`/`extend`) over HTTP or gRPC, subprocess execution via `deliver exec`, provider-compatible HMAC (GitHub/Gitea), Admin API backlog/DLQ handling, or production hardening for ingress and delivery.
-metadata: {"openclaw":{"homepage":"https://github.com/7schmiede/claw-skill-hookaido","requires":{"bins":["hookaido"]},"install":[{"id":"download-darwin-amd64","kind":"download","os":["darwin"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_darwin_amd64.tar.gz","archive":"tar.gz","extract":true,"stripComponents":1,"targetDir":"~/.local/bin","bins":["hookaido"],"label":"Download hookaido v2.2.0 (macOS amd64)"},{"id":"download-darwin-arm64","kind":"download","os":["darwin"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_darwin_arm64.tar.gz","archive":"tar.gz","extract":true,"stripComponents":1,"targetDir":"~/.local/bin","bins":["hookaido"],"label":"Download hookaido v2.2.0 (macOS arm64)"},{"id":"download-linux-amd64","kind":"download","os":["linux"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_linux_amd64.tar.gz","archive":"tar.gz","extract":true,"stripComponents":1,"targetDir":"~/.local/bin","bins":["hookaido"],"label":"Download hookaido v2.2.0 (Linux amd64)"},{"id":"download-linux-arm64","kind":"download","os":["linux"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_linux_arm64.tar.gz","archive":"tar.gz","extract":true,"stripComponents":1,"targetDir":"~/.local/bin","bins":["hookaido"],"label":"Download hookaido v2.2.0 (Linux arm64)"},{"id":"download-windows-amd64","kind":"download","os":["win32"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_windows_amd64.zip","archive":"zip","extract":true,"targetDir":"~/.openclaw/tools/hookaido","bins":["hookaido"],"label":"Download hookaido v2.2.0 (Windows amd64)"},{"id":"download-windows-arm64","kind":"download","os":["win32"],"url":"https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_windows_arm64.zip","archive":"zip","extract":true,"targetDir":"~/.openclaw/tools/hookaido","bins":["hookaido"],"label":"Download hookaido v2.2.0 (Windows arm64)"}]}}
+name: hookaido
+version: "2.2.0"
+description: >-
+  Receive incoming webhooks from external services and trigger automations,
+  integrations, and event-driven workflows. Operate inbound/outbound/internal
+  webhook flows with Hookaido v2, queue triage, MCP workflows, release
+  verification, subprocess delivery (deliver exec), and HTTP/gRPC pull workers.
+  Use when tasks involve Hookaidofile authoring, queue backend selection
+  (sqlite, memory, postgres), hookaido CLI commands (run, config fmt, config
+  validate, mcp serve), pull operations (dequeue/ack/nack/extend) over HTTP or
+  gRPC, subprocess execution via deliver exec, provider-compatible HMAC
+  (GitHub/Gitea), Admin API backlog/DLQ handling, or production hardening for
+  ingress and delivery.
+metadata:
+  openclaw:
+    homepage: https://github.com/7schmiede/claw-skill-hookaido
+    emoji: "\U0001FA9D"
+    primaryEnv: HOOKAIDO_PULL_TOKEN
+    requires:
+      bins:
+        - hookaido
+      env:
+        - HOOKAIDO_PULL_TOKEN
+        - HOOKAIDO_INGRESS_SECRET
+    install:
+      - id: go-install
+        kind: go
+        package: github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.0
+        bins:
+          - hookaido
+      - id: download-darwin-amd64
+        kind: download
+        os:
+          - darwin
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_darwin_amd64.tar.gz
+        archive: tar.gz
+        extract: true
+        stripComponents: 1
+        targetDir: ~/.local/bin
+        bins:
+          - hookaido
+        label: Download hookaido v2.2.0 (macOS amd64)
+      - id: download-darwin-arm64
+        kind: download
+        os:
+          - darwin
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_darwin_arm64.tar.gz
+        archive: tar.gz
+        extract: true
+        stripComponents: 1
+        targetDir: ~/.local/bin
+        bins:
+          - hookaido
+        label: Download hookaido v2.2.0 (macOS arm64)
+      - id: download-linux-amd64
+        kind: download
+        os:
+          - linux
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_linux_amd64.tar.gz
+        archive: tar.gz
+        extract: true
+        stripComponents: 1
+        targetDir: ~/.local/bin
+        bins:
+          - hookaido
+        label: Download hookaido v2.2.0 (Linux amd64)
+      - id: download-linux-arm64
+        kind: download
+        os:
+          - linux
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_linux_arm64.tar.gz
+        archive: tar.gz
+        extract: true
+        stripComponents: 1
+        targetDir: ~/.local/bin
+        bins:
+          - hookaido
+        label: Download hookaido v2.2.0 (Linux arm64)
+      - id: download-windows-amd64
+        kind: download
+        os:
+          - win32
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_windows_amd64.zip
+        archive: zip
+        extract: true
+        targetDir: ~/.openclaw/tools/hookaido
+        bins:
+          - hookaido
+        label: Download hookaido v2.2.0 (Windows amd64)
+      - id: download-windows-arm64
+        kind: download
+        os:
+          - win32
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.0/hookaido_v2.2.0_windows_arm64.zip
+        archive: zip
+        extract: true
+        targetDir: ~/.openclaw/tools/hookaido
+        bins:
+          - hookaido
+        label: Download hookaido v2.2.0 (Windows arm64)
 ---
 
 # Hookaido
