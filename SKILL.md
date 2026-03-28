@@ -1,17 +1,17 @@
 ---
 name: hookaido
-version: "2.2.1"
+version: "2.2.2"
 description: >-
-  Receive incoming webhooks from external services and trigger automations,
-  integrations, and event-driven workflows. Operate inbound/outbound/internal
-  webhook flows with Hookaido v2, queue triage, MCP workflows, release
-  verification, subprocess delivery (deliver exec), and HTTP/gRPC pull workers.
-  Use when tasks involve Hookaidofile authoring, queue backend selection
-  (sqlite, memory, postgres), hookaido CLI commands (run, config fmt, config
-  validate, mcp serve), pull operations (dequeue/ack/nack/extend) over HTTP or
-  gRPC, subprocess execution via deliver exec, provider-compatible HMAC
-  (GitHub/Gitea), Admin API backlog/DLQ handling, or production hardening for
-  ingress and delivery.
+  Webhook infrastructure for receiving, queuing, and delivering webhooks.
+  Operate Hookaido webhook ingress, durable webhook queue (SQLite/Postgres),
+  webhook delivery (HTTP push, subprocess exec, pull API), webhook signature
+  verification (HMAC, GitHub webhooks, Gitea webhooks), dead-letter queue,
+  and webhook retry policies. Use when tasks involve webhook endpoint
+  configuration (Hookaidofile), webhook queue backends (sqlite, memory,
+  postgres), hookaido CLI (run, config fmt, config validate, mcp serve),
+  webhook consumption (dequeue/ack/nack/extend) over HTTP or gRPC, subprocess
+  webhook handlers (deliver exec), webhook provider HMAC (GitHub/Gitea/Stripe),
+  Admin API webhook backlog/DLQ triage, or production webhook hardening.
 metadata:
   openclaw:
     homepage: https://github.com/7schmiede/claw-skill-hookaido
