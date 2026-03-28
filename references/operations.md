@@ -15,14 +15,14 @@ Public repositories:
 
 - Use one of the skill installer actions from `metadata.openclaw.install` (platform + architecture specific download).
 - Choose the artifact that matches your host architecture (`amd64` or `arm64`).
-- The OpenClaw download URLs are pinned to Hookaido `v2.0.0`.
+- The OpenClaw download URLs are pinned to Hookaido `v2.2.0`.
 - macOS/Linux installers extract to `~/.local/bin` (with `stripComponents: 1`).
 - Windows installers extract to `~/.openclaw/tools/hookaido`.
 
 Direct CLI fallback:
 
 ```bash
-go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.0.0
+go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.0
 ```
 
 Release-binary fallback from this skill folder:
@@ -33,7 +33,7 @@ bash {baseDir}/scripts/install_hookaido.sh
 
 The fallback installer is hardened:
 
-- Defaults to pinned `v2.0.0` (no dynamic `latest` lookup).
+- Defaults to pinned `v2.2.0` (no dynamic `latest` lookup).
 - Verifies SHA256 of the downloaded release artifact before extraction/install.
 
 Optional pins/overrides for the installer script:
@@ -77,8 +77,8 @@ hookaido mcp serve --config ./Hookaidofile --db ./.data/hookaido.db --role read
 
 # Verify a public release bundle before rollout
 hookaido verify-release \
-  --checksums ./hookaido_v2.0.0_checksums.txt \
-  --public-key ./hookaido_v2.0.0_checksums.txt.pub.pem \
+  --checksums ./hookaido_v2.2.0_checksums.txt \
+  --public-key ./hookaido_v2.2.0_checksums.txt.pub.pem \
   --require-provenance
 ```
 
@@ -100,6 +100,47 @@ pull_api {
 }
 ```
 
+## Exec Delivery Config (v2.2.0+)
+
+```hcl
+/webhooks/github {
+  auth hmac {
+    provider github
+    secret env:GITHUB_WEBHOOK_SECRET
+  }
+  deliver exec "/opt/hooks/deploy.sh" {
+    timeout 30s
+    retry exponential max 3 base 1s cap 30s jitter 0.2
+    env DEPLOY_ENV production
+  }
+}
+```
+
+Exit codes: `0` = ack, `75`/`1-125` = retry, `126`/`127` = immediate DLQ.
+Metadata env vars: `HOOKAIDO_ROUTE`, `HOOKAIDO_EVENT_ID`, `HOOKAIDO_CONTENT_TYPE`, `HOOKAIDO_ATTEMPT`, `HOOKAIDO_HEADER_*`.
+
+## Provider-Compatible HMAC Config (v2.2.0+)
+
+```hcl
+# GitHub
+/webhooks/github {
+  auth hmac {
+    provider github
+    secret env:GITHUB_WEBHOOK_SECRET
+  }
+  pull { path /pull/github }
+}
+
+# Gitea / Forgejo
+/webhooks/gitea {
+  auth hmac {
+    provider gitea
+    secret env:GITEA_WEBHOOK_SECRET
+  }
+  pull { path /pull/gitea }
+}
+```
+
 ## Pull API Calls
 
 Assume base URL `http://localhost:9443/pull/github` and token in `HOOKAIDO_PULL_TOKEN`.
@@ -117,7 +158,7 @@ curl -sS -X POST "http://localhost:9443/pull/github/ack" \
   -H "Content-Type: application/json" \
   -d '{"lease_id":"lease_xyz"}'
 
-# Batch ack (v2.0.0+)
+# Batch ack (v2.2.0+)
 curl -sS -X POST "http://localhost:9443/pull/github/ack" \
   -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN" \
   -H "Content-Type: application/json" \
@@ -135,7 +176,7 @@ curl -sS -X POST "http://localhost:9443/pull/github/extend" \
   -H "Content-Type: application/json" \
   -d '{"lease_id":"lease_xyz","lease_ttl":"30s"}'
 
-# Batch nack (v2.0.0+)
+# Batch nack (v2.2.0+)
 curl -sS -X POST "http://localhost:9443/pull/github/nack" \
   -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN" \
   -H "Content-Type: application/json" \
@@ -180,7 +221,7 @@ queue sqlite
 # Ephemeral development/testing mode
 queue memory
 
-# Shared database mode (v2.0.0+)
+# Shared database mode (v2.2.0+)
 queue postgres
 ```
 
