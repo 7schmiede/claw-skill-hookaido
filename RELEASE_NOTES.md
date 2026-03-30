@@ -2,10 +2,23 @@
 
 ## GitHub Release Summary
 
-Recommended tag: `v2.2.0`
+Recommended tag: `v2.2.1`
 
-Public Hookaido skill refresh for upstream `v2.2.0`.
-This update pins installer assets and checksums to Hookaido v2.2.0, adds subprocess delivery (`deliver exec`) and provider-compatible HMAC (GitHub/Gitea) as new skill playbooks, and updates all version references.
+Bugfix-only update pinning to upstream Hookaido `v2.2.1`.
+Upstream fixes: dispatcher delivery logging, zero-target route warning, hot-reload for delivery config changes.
+
+## v2.2.1 - 2026-03-30
+
+Bugfix-only update pinning to upstream Hookaido `v2.2.1`.
+
+### Highlights
+
+- Pinned all binary installer actions and checksums to Hookaido `v2.2.1`.
+- Upstream fixes: dispatcher delivery logging (previously silent), zero-target route warning, hot-reload for delivery config changes via `--watch`/SIGHUP.
+
+### Compatibility
+
+No new features. All existing skill workflows remain unchanged.
 
 ## v2.2.0 - 2026-03-28
 
