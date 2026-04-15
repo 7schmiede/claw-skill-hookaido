@@ -1,6 +1,6 @@
 ---
 name: hookaido
-version: "2.2.3"
+version: "2.2.4"
 description: >-
   Webhook infrastructure for receiving, queuing, and delivering webhooks.
   Operate Hookaido webhook ingress, durable webhook queue (SQLite/Postgres),
@@ -26,79 +26,79 @@ metadata:
     install:
       - id: go-install
         kind: go
-        package: github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.1
+        package: github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.2
         bins:
           - hookaido
       - id: download-darwin-amd64
         kind: download
         os:
           - darwin
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.1/hookaido_v2.2.1_darwin_amd64.tar.gz
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_darwin_amd64.tar.gz
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.2.1 (macOS amd64)
+        label: Download hookaido v2.2.2 (macOS amd64)
       - id: download-darwin-arm64
         kind: download
         os:
           - darwin
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.1/hookaido_v2.2.1_darwin_arm64.tar.gz
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_darwin_arm64.tar.gz
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.2.1 (macOS arm64)
+        label: Download hookaido v2.2.2 (macOS arm64)
       - id: download-linux-amd64
         kind: download
         os:
           - linux
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.1/hookaido_v2.2.1_linux_amd64.tar.gz
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_linux_amd64.tar.gz
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.2.1 (Linux amd64)
+        label: Download hookaido v2.2.2 (Linux amd64)
       - id: download-linux-arm64
         kind: download
         os:
           - linux
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.1/hookaido_v2.2.1_linux_arm64.tar.gz
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_linux_arm64.tar.gz
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.2.1 (Linux arm64)
+        label: Download hookaido v2.2.2 (Linux arm64)
       - id: download-windows-amd64
         kind: download
         os:
           - win32
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.1/hookaido_v2.2.1_windows_amd64.zip
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_windows_amd64.zip
         archive: zip
         extract: true
         targetDir: ~/.openclaw/tools/hookaido
         bins:
           - hookaido
-        label: Download hookaido v2.2.1 (Windows amd64)
+        label: Download hookaido v2.2.2 (Windows amd64)
       - id: download-windows-arm64
         kind: download
         os:
           - win32
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.1/hookaido_v2.2.1_windows_arm64.zip
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_windows_arm64.zip
         archive: zip
         extract: true
         targetDir: ~/.openclaw/tools/hookaido
         bins:
           - hookaido
-        label: Download hookaido v2.2.1 (Windows arm64)
+        label: Download hookaido v2.2.2 (Windows arm64)
 ---
 
 # Hookaido
@@ -106,7 +106,7 @@ metadata:
 ## Overview
 
 Implement and troubleshoot Hookaido with a config-first workflow: edit `Hookaidofile`, validate, run, exercise ingress/pull/exec flows, then diagnose queue health and DLQ behavior.
-Treat Hookaido v2.2.1's modular architecture as additive in this skill: keep the existing workflow intact by default, and opt into modules such as `postgres`, gRPC workers, subprocess delivery (`deliver exec`), or release verification only when they materially help the task.
+Treat Hookaido v2.2.2's modular architecture as additive in this skill: keep the existing workflow intact by default, and opt into modules such as `postgres`, gRPC workers, subprocess delivery (`deliver exec`), or release verification only when they materially help the task.
 Use conservative, reversible changes and validate before runtime operations.
 
 ## Workflow
@@ -114,8 +114,8 @@ Use conservative, reversible changes and validate before runtime operations.
 1. Confirm target topology: inbound+pull (HTTP or gRPC), push outbound, subprocess exec, or internal queue, plus the queue backend (`sqlite`, `memory`, or `postgres`).
 2. Choose runtime mode and ensure `hookaido` exists where tools execute.
    - Host-binary mode: use the install action from `metadata.openclaw.install`.
-   - Host fallback: run `bash {baseDir}/scripts/install_hookaido.sh` (pinned `v2.2.1`, SHA256-verified).
-   - Public repo/source mode: use the public upstream repo `github.com/nuetzliches/hookaido` via `go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.1` when a source-based install is preferred.
+   - Host fallback: run `bash {baseDir}/scripts/install_hookaido.sh` (pinned `v2.2.2`, SHA256-verified).
+   - Public repo/source mode: use the public upstream repo `github.com/nuetzliches/hookaido` via `go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.2` when a source-based install is preferred.
    - Docker-sandbox mode: use a sandbox image that already includes `hookaido` (preferred), or install inside sandbox via `agents.defaults.sandbox.docker.setupCommand`.
    - Keep host install actions available as fallback and to satisfy `metadata.openclaw.requires.bins`.
 3. Inspect and update `Hookaidofile` minimally.
@@ -270,7 +270,7 @@ Use:
 
 Use:
 
-- `hookaido verify-release --checksums ./hookaido_v2.2.1_checksums.txt --require-provenance`
+- `hookaido verify-release --checksums ./hookaido_v2.2.2_checksums.txt --require-provenance`
 
 ## Validation Checklist
 

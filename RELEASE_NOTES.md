@@ -2,10 +2,23 @@
 
 ## GitHub Release Summary
 
-Recommended tag: `v2.2.1`
+Recommended tag: `v2.2.2`
 
-Bugfix-only update pinning to upstream Hookaido `v2.2.1`.
-Upstream fixes: dispatcher delivery logging, zero-target route warning, hot-reload for delivery config changes.
+Performance fix pinning to upstream Hookaido `v2.2.2`.
+Upstream fix: event-driven dequeue wake-up replaces 25ms polling, reducing idle CPU from ~26% to <1%.
+
+## v2.2.2 - 2026-04-15
+
+Performance update pinning to upstream Hookaido `v2.2.2`.
+
+### Highlights
+
+- Pinned all binary installer actions and checksums to Hookaido `v2.2.2`.
+- Upstream fix: queue dequeue loop now uses event-driven channel notification instead of 25ms polling. Enqueue signals waiting Dequeue goroutines immediately; fallback polling raised to 1s for delayed/retry items only. Idle CPU drops from ~26% to <1% (SQLite and PostgreSQL backends).
+
+### Compatibility
+
+No new features. All existing skill workflows remain unchanged.
 
 ## v2.2.1 - 2026-03-30
 
