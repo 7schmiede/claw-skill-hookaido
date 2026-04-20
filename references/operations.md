@@ -15,14 +15,14 @@ Public repositories:
 
 - Use one of the skill installer actions from `metadata.openclaw.install` (platform + architecture specific download).
 - Choose the artifact that matches your host architecture (`amd64` or `arm64`).
-- The OpenClaw download URLs are pinned to Hookaido `v2.2.1`.
+- The OpenClaw download URLs are pinned to Hookaido `v2.6.0`.
 - macOS/Linux installers extract to `~/.local/bin` (with `stripComponents: 1`).
 - Windows installers extract to `~/.openclaw/tools/hookaido`.
 
 Direct CLI fallback:
 
 ```bash
-go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.1
+go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.6.0
 ```
 
 Release-binary fallback from this skill folder:
@@ -33,7 +33,7 @@ bash {baseDir}/scripts/install_hookaido.sh
 
 The fallback installer is hardened:
 
-- Defaults to pinned `v2.2.1` (no dynamic `latest` lookup).
+- Defaults to pinned `v2.6.0` (no dynamic `latest` lookup).
 - Verifies SHA256 of the downloaded release artifact before extraction/install.
 
 Optional pins/overrides for the installer script:
@@ -77,8 +77,8 @@ hookaido mcp serve --config ./Hookaidofile --db ./.data/hookaido.db --role read
 
 # Verify a public release bundle before rollout
 hookaido verify-release \
-  --checksums ./hookaido_v2.2.1_checksums.txt \
-  --public-key ./hookaido_v2.2.1_checksums.txt.pub.pem \
+  --checksums ./hookaido_v2.6.0_checksums.txt \
+  --public-key ./hookaido_v2.6.0_checksums.txt.pub.pem \
   --require-provenance
 ```
 
@@ -138,6 +138,24 @@ Metadata env vars: `HOOKAIDO_ROUTE`, `HOOKAIDO_EVENT_ID`, `HOOKAIDO_CONTENT_TYPE
     secret env:GITEA_WEBHOOK_SECRET
   }
   pull { path /pull/gitea }
+}
+
+# Stripe (v2.6.0+)
+/webhooks/stripe {
+  auth hmac {
+    provider stripe
+    secret env:STRIPE_SIGNING_SECRET
+  }
+  pull { path /pull/stripe }
+}
+
+# Cituro (v2.6.0+)
+/webhooks/cituro {
+  auth hmac {
+    provider cituro
+    secret env:CITURO_WEBHOOK_SECRET
+  }
+  pull { path /pull/cituro }
 }
 ```
 
@@ -266,6 +284,27 @@ curl -sS -X POST "http://127.0.0.1:2019/dlq/delete" \
   -d '{"ids":["evt_3"]}'
 ```
 
+## SSE Streaming (v2.5.3+)
+
+Connect a persistent SSE stream instead of polling dequeue:
+
+```bash
+# Stream events in real time (persistent connection, server pushes)
+curl -sS -N "http://localhost:9443/pull/github/stream" \
+  -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN"
+
+# ACK a streamed event (same endpoint as pull)
+curl -sS -X POST "http://localhost:9443/pull/github/ack" \
+  -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"lease_id":"lease_xyz"}'
+```
+
+Notes:
+- Multiple concurrent SSE connections act as competing consumers.
+- ACK/NACK/extend operations use the same POST endpoints as pull mode.
+- Prometheus metrics are emitted per route.
+
 ## MCP Role Patterns
 
 ```bash
@@ -281,3 +320,45 @@ hookaido mcp serve --config ./Hookaidofile --db ./.data/hookaido.db \
   --enable-mutations --enable-runtime-control --role admin \
   --principal ops@example.test --pid-file ./hookaido.pid
 ```
+
+## Claude Code MCP Plugin Config
+
+Register Hookaido as a Claude Code MCP plugin in `.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "hookaido": {
+      "command": "hookaido",
+      "args": [
+        "mcp", "serve",
+        "--config", "./Hookaidofile",
+        "--db", "./.data/hookaido.db",
+        "--role", "read"
+      ]
+    }
+  }
+}
+```
+
+For operate role (queue mutations enabled):
+
+```json
+{
+  "mcpServers": {
+    "hookaido": {
+      "command": "hookaido",
+      "args": [
+        "mcp", "serve",
+        "--config", "./Hookaidofile",
+        "--db", "./.data/hookaido.db",
+        "--enable-mutations",
+        "--role", "operate",
+        "--principal", "claude"
+      ]
+    }
+  }
+}
+```
+
+Use `~/.claude/settings.json` for global registration across all projects.

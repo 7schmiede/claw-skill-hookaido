@@ -1,17 +1,18 @@
 ---
 name: hookaido
-version: "2.2.4"
+version: "2.6.0"
 description: >-
   Webhook infrastructure for receiving, queuing, and delivering webhooks.
   Operate Hookaido webhook ingress, durable webhook queue (SQLite/Postgres),
-  webhook delivery (HTTP push, subprocess exec, pull API), webhook signature
-  verification (HMAC, GitHub webhooks, Gitea webhooks), dead-letter queue,
-  and webhook retry policies. Use when tasks involve webhook endpoint
-  configuration (Hookaidofile), webhook queue backends (sqlite, memory,
+  webhook delivery (HTTP push, subprocess exec, pull API, SSE streaming),
+  webhook signature verification (HMAC, GitHub, Gitea, Stripe, Cituro),
+  dead-letter queue, and webhook retry policies. Use when tasks involve webhook
+  endpoint configuration (Hookaidofile), webhook queue backends (sqlite, memory,
   postgres), hookaido CLI (run, config fmt, config validate, mcp serve),
-  webhook consumption (dequeue/ack/nack/extend) over HTTP or gRPC, subprocess
-  webhook handlers (deliver exec), webhook provider HMAC (GitHub/Gitea/Stripe),
-  Admin API webhook backlog/DLQ triage, or production webhook hardening.
+  webhook consumption (dequeue/ack/nack/extend) over HTTP, SSE, or gRPC,
+  subprocess webhook handlers (deliver exec), webhook provider HMAC
+  (GitHub/Gitea/Stripe/Cituro), Admin API webhook backlog/DLQ triage, or
+  production webhook hardening.
 metadata:
   openclaw:
     homepage: https://github.com/7schmiede/claw-skill-hookaido
@@ -26,79 +27,79 @@ metadata:
     install:
       - id: go-install
         kind: go
-        package: github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.2
+        package: github.com/nuetzliches/hookaido/cmd/hookaido@v2.6.0
         bins:
           - hookaido
       - id: download-darwin-amd64
         kind: download
         os:
           - darwin
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_darwin_amd64.tar.gz
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_darwin_amd64.tar.gz
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.2.2 (macOS amd64)
+        label: Download hookaido v2.6.0 (macOS amd64)
       - id: download-darwin-arm64
         kind: download
         os:
           - darwin
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_darwin_arm64.tar.gz
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_darwin_arm64.tar.gz
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.2.2 (macOS arm64)
+        label: Download hookaido v2.6.0 (macOS arm64)
       - id: download-linux-amd64
         kind: download
         os:
           - linux
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_linux_amd64.tar.gz
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_linux_amd64.tar.gz
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.2.2 (Linux amd64)
+        label: Download hookaido v2.6.0 (Linux amd64)
       - id: download-linux-arm64
         kind: download
         os:
           - linux
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_linux_arm64.tar.gz
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_linux_arm64.tar.gz
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.2.2 (Linux arm64)
+        label: Download hookaido v2.6.0 (Linux arm64)
       - id: download-windows-amd64
         kind: download
         os:
           - win32
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_windows_amd64.zip
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_windows_amd64.zip
         archive: zip
         extract: true
         targetDir: ~/.openclaw/tools/hookaido
         bins:
           - hookaido
-        label: Download hookaido v2.2.2 (Windows amd64)
+        label: Download hookaido v2.6.0 (Windows amd64)
       - id: download-windows-arm64
         kind: download
         os:
           - win32
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.2.2/hookaido_v2.2.2_windows_arm64.zip
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_windows_arm64.zip
         archive: zip
         extract: true
         targetDir: ~/.openclaw/tools/hookaido
         bins:
           - hookaido
-        label: Download hookaido v2.2.2 (Windows arm64)
+        label: Download hookaido v2.6.0 (Windows arm64)
 ---
 
 # Hookaido
@@ -106,7 +107,7 @@ metadata:
 ## Overview
 
 Implement and troubleshoot Hookaido with a config-first workflow: edit `Hookaidofile`, validate, run, exercise ingress/pull/exec flows, then diagnose queue health and DLQ behavior.
-Treat Hookaido v2.2.2's modular architecture as additive in this skill: keep the existing workflow intact by default, and opt into modules such as `postgres`, gRPC workers, subprocess delivery (`deliver exec`), or release verification only when they materially help the task.
+Treat Hookaido v2.6.0's modular architecture as additive in this skill: keep the existing workflow intact by default, and opt into modules such as `postgres`, gRPC workers, subprocess delivery (`deliver exec`), or release verification only when they materially help the task.
 Use conservative, reversible changes and validate before runtime operations.
 
 ## Workflow
@@ -114,8 +115,8 @@ Use conservative, reversible changes and validate before runtime operations.
 1. Confirm target topology: inbound+pull (HTTP or gRPC), push outbound, subprocess exec, or internal queue, plus the queue backend (`sqlite`, `memory`, or `postgres`).
 2. Choose runtime mode and ensure `hookaido` exists where tools execute.
    - Host-binary mode: use the install action from `metadata.openclaw.install`.
-   - Host fallback: run `bash {baseDir}/scripts/install_hookaido.sh` (pinned `v2.2.2`, SHA256-verified).
-   - Public repo/source mode: use the public upstream repo `github.com/nuetzliches/hookaido` via `go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.2.2` when a source-based install is preferred.
+   - Host fallback: run `bash {baseDir}/scripts/install_hookaido.sh` (pinned `v2.6.0`, SHA256-verified).
+   - Public repo/source mode: use the public upstream repo `github.com/nuetzliches/hookaido` via `go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.6.0` when a source-based install is preferred.
    - Docker-sandbox mode: use a sandbox image that already includes `hookaido` (preferred), or install inside sandbox via `agents.defaults.sandbox.docker.setupCommand`.
    - Keep host install actions available as fallback and to satisfy `metadata.openclaw.requires.bins`.
 3. Inspect and update `Hookaidofile` minimally.
@@ -200,7 +201,7 @@ pull_api {
 
 ### Configure Provider-Compatible HMAC
 
-1. Use `provider github` or `provider gitea` for webhook providers that use their own signature format.
+1. Use `provider github`, `provider gitea`, `provider stripe`, or `provider cituro` for webhook providers with their own signature format.
 2. Provider mode disables timestamp/nonce replay protection (providers do not send those headers).
 3. `signature_header`, `timestamp_header`, `nonce_header`, and `tolerance` are forbidden in provider mode (compile error).
 
@@ -220,6 +221,41 @@ pull_api {
   }
   pull { path /pull/gitea }
 }
+
+/webhooks/stripe {
+  auth hmac {
+    provider stripe
+    secret env:STRIPE_SIGNING_SECRET
+  }
+  pull { path /pull/stripe }
+}
+
+/webhooks/cituro {
+  auth hmac {
+    provider cituro
+    secret env:CITURO_WEBHOOK_SECRET
+  }
+  pull { path /pull/cituro }
+}
+```
+
+### Use SSE Streaming (v2.5.3+)
+
+1. SSE replaces polling for real-time webhook delivery — use `GET {pull.path}/stream` instead of repeated `POST .../dequeue`.
+2. ACK/NACK operations use the same existing POST endpoints; no protocol change.
+3. Multiple concurrent SSE connections act as competing consumers.
+4. Configure keepalive interval (`keepalive`) and max connection duration (`max_duration`) in the route's `pull` block.
+
+```bash
+# Connect SSE stream (persistent, server pushes events)
+curl -sS -N "http://localhost:9443/pull/github/stream" \
+  -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN"
+
+# ACK received event
+curl -sS -X POST "http://localhost:9443/pull/github/ack" \
+  -H "Authorization: Bearer $HOOKAIDO_PULL_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"lease_id":"lease_xyz"}'
 ```
 
 ### Configure Queue Backends
@@ -262,6 +298,48 @@ Use:
    - `--enable-runtime-control --role admin --pid-file <path>`
 4. Include `reason` for mutation calls and keep it specific.
 
+#### Register as Claude Code MCP Plugin
+
+Add to `.claude/settings.json` (or `~/.claude/settings.json` for global use):
+
+```json
+{
+  "mcpServers": {
+    "hookaido": {
+      "command": "hookaido",
+      "args": [
+        "mcp", "serve",
+        "--config", "./Hookaidofile",
+        "--db", "./.data/hookaido.db",
+        "--role", "read"
+      ]
+    }
+  }
+}
+```
+
+For operate role (queue mutations):
+
+```json
+{
+  "mcpServers": {
+    "hookaido": {
+      "command": "hookaido",
+      "args": [
+        "mcp", "serve",
+        "--config", "./Hookaidofile",
+        "--db", "./.data/hookaido.db",
+        "--enable-mutations",
+        "--role", "operate",
+        "--principal", "claude"
+      ]
+    }
+  }
+}
+```
+
+The MCP server exposes structured tools directly — no shell output parsing. Claude Code discovers available tools at startup and uses them with typed parameters.
+
 ### Verify Public Releases
 
 1. Prefer official release assets from the public Hookaido repo.
@@ -270,14 +348,14 @@ Use:
 
 Use:
 
-- `hookaido verify-release --checksums ./hookaido_v2.2.2_checksums.txt --require-provenance`
+- `hookaido verify-release --checksums ./hookaido_v2.6.0_checksums.txt --require-provenance`
 
 ## Validation Checklist
 
 - `hookaido config validate` returns success before runtime start/reload.
 - `hookaido config validate --strict-secrets` is used when secret refs, Vault, or public-release rollout validation matters.
 - Health endpoint is reachable and reports expected queue/backend state.
-- Pull consumer can `dequeue`, `ack`, `nack`, and `extend` with valid token (HTTP and optional gRPC transport), including batch `ack`/`nack` when enabled.
+- Pull consumer can `dequeue`, `ack`, `nack`, and `extend` with valid token (HTTP, SSE, and optional gRPC transport), including batch `ack`/`nack` when enabled.
 - For push mode, retry/timeout behavior is explicitly configured.
 - For exec mode, handler script is executable, reads stdin, and uses exit codes correctly (0=ack, non-zero=retry, 126/127=DLQ).
 - For `queue postgres`, runtime is started with `--postgres-dsn` or `HOOKAIDO_POSTGRES_DSN`.

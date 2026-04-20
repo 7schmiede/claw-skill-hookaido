@@ -2,10 +2,25 @@
 
 ## GitHub Release Summary
 
-Recommended tag: `v2.2.2`
+Recommended tag: `v2.6.0`
 
-Performance fix pinning to upstream Hookaido `v2.2.2`.
-Upstream fix: event-driven dequeue wake-up replaces 25ms polling, reducing idle CPU from ~26% to <1%.
+Feature update pinning to upstream Hookaido `v2.6.0`.
+New: Stripe and Cituro HMAC providers, SSE streaming endpoint, Claude Code MCP plugin guidance.
+
+## v2.6.0 - 2026-04-21
+
+Feature update pinning to upstream Hookaido `v2.6.0`.
+
+### Highlights
+
+- Pinned all binary installer actions and checksums to Hookaido `v2.6.0`.
+- Added `provider stripe` and `provider cituro` to provider-compatible HMAC config (v2.6.0 upstream).
+- Added SSE streaming playbook: `GET {pull.path}/stream` for real-time webhook delivery without polling (v2.5.3 upstream).
+- Added Claude Code MCP plugin configuration examples (`.claude/settings.json`) for read and operate roles.
+
+### Compatibility
+
+Additive coverage. All existing skill workflows remain unchanged.
 
 ## v2.2.2 - 2026-04-15
 
