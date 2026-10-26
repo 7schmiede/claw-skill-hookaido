@@ -35,6 +35,7 @@ metadata:
         os:
           - darwin
         url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_darwin_amd64.tar.gz
+        sha256: 746c60826b3978052ada098dd11b7a40d08baef7f7675ef8ef0171e2768e9140
         archive: tar.gz
         extract: true
         stripComponents: 1
@@ -47,6 +48,7 @@ metadata:
         os:
           - darwin
         url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_darwin_arm64.tar.gz
+        sha256: aa4374893bb97688a6362d03bf69717c5319ad35a59b23d0a70255f10d004003
         archive: tar.gz
         extract: true
         stripComponents: 1
@@ -59,6 +61,7 @@ metadata:
         os:
           - linux
         url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_linux_amd64.tar.gz
+        sha256: fccba03b0d73fb9c6d1023279f40c7dfc34fbc1139cd9fb0dae07f8b96200fb2
         archive: tar.gz
         extract: true
         stripComponents: 1
@@ -71,6 +74,7 @@ metadata:
         os:
           - linux
         url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_linux_arm64.tar.gz
+        sha256: 1ad81c4830fc6b00381f84dbf3a45e5996f04b1498c2e7291147ad5647bb2269
         archive: tar.gz
         extract: true
         stripComponents: 1
@@ -83,6 +87,7 @@ metadata:
         os:
           - win32
         url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_windows_amd64.zip
+        sha256: 7bfa4693b2e118fc312811d6b076e135681331fb8af45a4e3980848ba7a19a5b
         archive: zip
         extract: true
         targetDir: ~/.openclaw/tools/hookaido
@@ -94,6 +99,7 @@ metadata:
         os:
           - win32
         url: https://github.com/nuetzliches/hookaido/releases/download/v2.6.0/hookaido_v2.6.0_windows_arm64.zip
+        sha256: 0074a482b7fd00e25d033e54175ab89a8b6d8895e91dfb1198d2a4fb102d8abc
         archive: zip
         extract: true
         targetDir: ~/.openclaw/tools/hookaido
@@ -110,11 +116,20 @@ Implement and troubleshoot Hookaido with a config-first workflow: edit `Hookaido
 Treat Hookaido v2.6.0's modular architecture as additive in this skill: keep the existing workflow intact by default, and opt into modules such as `postgres`, gRPC workers, subprocess delivery (`deliver exec`), or release verification only when they materially help the task.
 Use conservative, reversible changes and validate before runtime operations.
 
+## Installation, Capabilities, and Side Effects
+
+Besides webhook operations, this skill can install the `hookaido` binary and run local commands. Be explicit with the user about these effects before performing them:
+
+- **Binary install (supply chain):** the install actions download the pinned `v2.6.0` release archive from `github.com/nuetzliches/hookaido`, verify its SHA256 (`sha256` in `metadata.openclaw.install`, or the pinned checksum table in `scripts/install_hookaido.sh`), and place `hookaido` into a user-writable directory (`~/.local/bin` or `~/.openclaw/tools/hookaido`). `go install ...@v2.6.0` builds from source and is verified by the Go checksum database. Never install an unpinned or unverified version; for other versions, require an explicit `HOOKAIDO_SHA256` from the signed release checksums.
+- **Local execution:** the workflow runs `hookaido` CLI commands, `curl` against the operator's own Hookaido listeners (`127.0.0.1`/internal hosts only), and optionally subprocess handlers configured via `deliver exec`. It does not send data to third-party services.
+- **Persistent configuration:** registering the MCP server writes an MCP config entry. Prefer a project-local `.mcp.json`, ask before writing it, and never modify global agent settings without explicit user consent.
+- **Mutations:** queue/DLQ mutations and runtime control are opt-in (`--enable-mutations`, `--enable-runtime-control`) and must only be used after read-only inspection and explicit operator intent. DLQ deletion is irreversible.
+
 ## Workflow
 
 1. Confirm target topology: inbound+pull (HTTP or gRPC), push outbound, subprocess exec, or internal queue, plus the queue backend (`sqlite`, `memory`, or `postgres`).
 2. Choose runtime mode and ensure `hookaido` exists where tools execute.
-   - Host-binary mode: use the install action from `metadata.openclaw.install`.
+   - Host-binary mode: use the install action from `metadata.openclaw.install` (pinned `v2.6.0`, SHA256-verified).
    - Host fallback: run `bash {baseDir}/scripts/install_hookaido.sh` (pinned `v2.6.0`, SHA256-verified).
    - Public repo/source mode: use the public upstream repo `github.com/nuetzliches/hookaido` via `go install github.com/nuetzliches/hookaido/cmd/hookaido@v2.6.0` when a source-based install is preferred.
    - Docker-sandbox mode: use a sandbox image that already includes `hookaido` (preferred), or install inside sandbox via `agents.defaults.sandbox.docker.setupCommand`.
@@ -280,6 +295,7 @@ queue postgres
 2. Inspect DLQ before requeue or delete.
 3. If requeueing many items, explain expected impact and rollback path.
 4. Require clear operator reason strings for mutating admin calls.
+5. Treat `POST /dlq/delete` as destructive and irreversible: list the exact IDs, confirm with the operator before calling it, and prefer requeue when in doubt.
 
 Use:
 
@@ -300,7 +316,7 @@ Use:
 
 #### Register as Claude Code MCP Plugin
 
-Add to `.claude/settings.json` (or `~/.claude/settings.json` for global use):
+Register the server project-locally in `.mcp.json` at the project root (ask the operator before creating or changing it; do not register it globally unless they explicitly request that):
 
 ```json
 {
@@ -318,7 +334,9 @@ Add to `.claude/settings.json` (or `~/.claude/settings.json` for global use):
 }
 ```
 
-For operate role (queue mutations):
+Equivalent CLI: `claude mcp add --scope project hookaido -- hookaido mcp serve --config ./Hookaidofile --db ./.data/hookaido.db --role read`.
+
+Start with the read role. Switch to the operate role (queue mutations) only for deliberate operational work:
 
 ```json
 {

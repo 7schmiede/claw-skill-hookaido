@@ -7,6 +7,18 @@ Recommended tag: `v2.6.0`
 Feature update pinning to upstream Hookaido `v2.6.0`.
 New: Stripe and Cituro HMAC providers, SSE streaming endpoint, Claude Code MCP plugin guidance.
 
+## Unreleased
+
+Security hardening in response to the ClawHub security audit. No workflow changes.
+
+### Highlights
+
+- Added `sha256` to every `metadata.openclaw.install` download action so OpenClaw enforces integrity verification before install (checksums taken from the signed upstream `v2.6.0` checksum file).
+- Pinned the ClawHub CLI in `scripts/publish.sh` to a reviewed version instead of `clawhub@latest`.
+- Added an explicit "Installation, Capabilities, and Side Effects" section to `SKILL.md`.
+- MCP registration now uses project-local `.mcp.json` / `claude mcp add --scope project` (replaces the `.claude/settings.json` examples, which Claude Code does not read MCP servers from) and no longer suggests global registration.
+- Marked DLQ deletion as destructive and irreversible, with an explicit confirmation step.
+
 ## v2.6.0 - 2026-04-21
 
 Feature update pinning to upstream Hookaido `v2.6.0`.

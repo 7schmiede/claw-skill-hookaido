@@ -16,6 +16,7 @@ Public repositories:
 - Use one of the skill installer actions from `metadata.openclaw.install` (platform + architecture specific download).
 - Choose the artifact that matches your host architecture (`amd64` or `arm64`).
 - The OpenClaw download URLs are pinned to Hookaido `v2.6.0`.
+- Every download action declares the artifact `sha256` (from the signed `hookaido_v2.6.0_checksums.txt`); OpenClaw verifies it before extraction/install.
 - macOS/Linux installers extract to `~/.local/bin` (with `stripComponents: 1`).
 - Windows installers extract to `~/.openclaw/tools/hookaido`.
 
@@ -277,7 +278,9 @@ curl -sS -X POST "http://127.0.0.1:2019/dlq/requeue" \
   -H "X-Hookaido-Audit-Reason: retry-after-fix" \
   -d '{"ids":["evt_1","evt_2"]}'
 
-# Delete DLQ items
+# Delete DLQ items -- DESTRUCTIVE and IRREVERSIBLE.
+# Inspect the items first (GET /dlq), list the exact IDs, and get explicit
+# operator confirmation. Prefer requeue when in doubt.
 curl -sS -X POST "http://127.0.0.1:2019/dlq/delete" \
   -H "Content-Type: application/json" \
   -H "X-Hookaido-Audit-Reason: remove-invalid-payloads" \
@@ -323,7 +326,7 @@ hookaido mcp serve --config ./Hookaidofile --db ./.data/hookaido.db \
 
 ## Claude Code MCP Plugin Config
 
-Register Hookaido as a Claude Code MCP plugin in `.claude/settings.json`:
+Register Hookaido as a project-local Claude Code MCP server in `.mcp.json` at the project root (ask before creating or changing it):
 
 ```json
 {
@@ -341,7 +344,13 @@ Register Hookaido as a Claude Code MCP plugin in `.claude/settings.json`:
 }
 ```
 
-For operate role (queue mutations enabled):
+Equivalent CLI:
+
+```bash
+claude mcp add --scope project hookaido -- \n  hookaido mcp serve --config ./Hookaidofile --db ./.data/hookaido.db --role read
+```
+
+Start with the read role. Use the operate role (queue mutations enabled) only for deliberate operational work:
 
 ```json
 {
@@ -361,4 +370,4 @@ For operate role (queue mutations enabled):
 }
 ```
 
-Use `~/.claude/settings.json` for global registration across all projects.
+Keep the registration project-local. Do not register Hookaido globally (user scope) unless the operator explicitly asks for it.
