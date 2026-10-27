@@ -38,6 +38,15 @@ TOPICS="Webhook,OpenClaw,GitHub,Message Queue,MCP"
 DEFAULT_CHANGELOG="Hookaido ${VERSION}: OpenClaw Gateway integration (push to mapped hooks, pull relay for Gateways behind NAT), SHA256-verified installs, MCP works with Claude Code and OpenClaw, guidance corrected against the current release."
 CHANGELOG="${CHANGELOG:-$DEFAULT_CHANGELOG}"
 
+# Published files must use LF: CRLF breaks the shell scripts on Linux/macOS
+# (`set -euo pipefail\r`). A Windows checkout with core.autocrlf=true converts
+# them unless .gitattributes is honoured, so refuse to publish such a tree.
+if grep -rIlU $'\r' "$SKILL_DIR" --exclude-dir=.git >/dev/null 2>&1; then
+  echo "Error: files with CRLF line endings found; publish from an LF checkout:" >&2
+  grep -rIlU $'\r' "$SKILL_DIR" --exclude-dir=.git >&2
+  exit 1
+fi
+
 echo "Publishing hookaido@${VERSION} from ${SKILL_DIR}"
 
 npx --yes "clawhub@${CLAWHUB_VERSION}" publish "$SKILL_DIR" \
