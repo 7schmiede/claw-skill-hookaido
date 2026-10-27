@@ -1,0 +1,25 @@
+{
+  "name": "hookaido",
+  "description": "Hookaido skill for Claude Code",
+  "owner": {
+    "name": "7schmiede",
+    "url": "https://github.com/7schmiede"
+  },
+  "plugins": [
+    {
+      "name": "hookaido",
+      "displayName": "Hookaido Webhook Integration",
+      "source": "./",
+      "version": "2.15.1",
+      "description": "Operate Hookaido: durable, signature-verifying webhook ingress queue in front of OpenClaw agents and other consumers (config, pull/push delivery, DLQ triage, MCP diagnostics).",
+      "author": {
+        "name": "7schmiede",
+        "url": "https://github.com/7schmiede"
+      },
+      "homepage": "https://github.com/7schmiede/claw-skill-hookaido",
+      "repository": "https://github.com/7schmiede/claw-skill-hookaido",
+      "license": "MIT-0",
+      "keywords": ["webhooks", "queue", "openclaw", "hmac", "dlq", "mcp"]
+    }
+  ]
+}
