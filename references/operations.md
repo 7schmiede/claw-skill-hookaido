@@ -1,6 +1,6 @@
 # Hookaido Operations Reference (v2.15.2)
 
-Concrete syntax for install, CLI, DSL, and APIs. Every config snippet below passes `hookaido config validate` and is in `hookaido config fmt` order. Snippets with `pull` routes also need a `pull_api { auth token ... }` block.
+Concrete syntax for install, CLI, DSL, and APIs. Every config snippet below passes `hookaido config validate` and is in `hookaido config fmt` order. The DSL takes one directive per line: `{ a; b }` does not parse, and a one-line block may hold only a single directive (`pull { path /pull/x }`). Snippets with `pull` routes also need a `pull_api { auth token ... }` block.
 
 Public repositories:
 
@@ -66,7 +66,7 @@ docker run -d --name hookaido \
 
 - Default command: `run --config /app/Hookaidofile --db /app/.data/hookaido.db`. `/app/.data` is a volume. The process runs as UID 1000.
 - Mount the config directory, not a single file, when using `--watch`. A single-file bind mount never fires the watcher; use `--watch-interval 30s` as a polling fallback.
-- The admin API is loopback-only by default. To reach it from outside the container, set `admin_api { listen :2019; auth token env:HOOKAIDO_ADMIN_TOKEN }`; a token is mandatory off loopback.
+- The admin API is loopback-only by default. To reach it from outside the container, give `admin_api` the directives `listen :2019` and `auth token env:HOOKAIDO_ADMIN_TOKEN` (one per line); a token is mandatory off loopback.
 - OpenClaw Docker sandbox: build a sandbox image that copies the binary from the pinned image instead of downloading at runtime:
 
   ```dockerfile
@@ -164,7 +164,7 @@ ingress {
 
 ## Secret Rotation
 
-Static versions use `secrets { secret "S1" { value env:X; valid_from "..."; valid_until "..." } }` plus `auth hmac secret_ref "S1"`.
+Static versions: a `secrets { secret "S1" { ... } }` block with `value env:X`, `valid_from "..."` and `valid_until "..."` on separate lines, referenced as `auth hmac secret_ref "S1"`.
 
 Runtime-mutable pools are for providers that roll secrets via API, such as Cituro:
 
@@ -214,7 +214,7 @@ Push with custom headers and outbound signing:
 - `header "Authorization" "Bearer {env.TOKEN}"` adds a static or placeholder header. Placeholders are `{env.X}`, `{file.PATH}` and `{vars.NAME}`, resolved at startup/reload. Headers are set before signing.
 - `sign hmac` writes `X-Hookaido-Timestamp` and `X-Hookaido-Signature`. The signature is `hex(HMAC-SHA256(secret, METHOD\nPATH\nUNIX_TS\nsha256hex(body)))`.
 - Retries happen on network errors, timeouts, `5xx`, `429` and `408`. Other `4xx` go to the DLQ.
-- The target must pass the egress policy (`defaults { egress { allow ...; deny ... } }`).
+- The target must pass the egress policy (`allow`/`deny` lines in `defaults { egress { ... } }`).
 
 ### Exec delivery
 

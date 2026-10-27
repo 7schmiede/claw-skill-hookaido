@@ -195,6 +195,7 @@ pull_api {
 ```
 
 - Providers: `github`, `gitea` (also Forgejo), `stripe`, `cituro`.
+- One directive per line. Semicolons do not separate directives (`auth hmac { provider github; secret ... }` fails); one-line blocks may hold a single directive only.
 - Route modes are exclusive: a route has either `pull { ... }` or `deliver ...`.
 - Queue backend is set on routes (`queue "sqlite"`, `queue "memory"`, `queue "postgres"`); one backend per process. There is no top-level `queue` block.
 - Sources that can only be given a URL: `auth query "t" "env:URL_TOKEN"` (not replay-safe; bad token returns `404`).
