@@ -11,11 +11,10 @@ description: >-
   verify-release, mcp serve), deliver/exec targets, pull consumers and
   consumer groups, DLQ triage, secret rotation, metrics, and MCP diagnostics.
 compatibility: >-
-  Needs the hookaido binary (pinned v2.15.1; install actions verify SHA256) or
-  the ghcr.io/nuetzliches/hookaido image. Uses curl for HTTP checks. MCP
-  client registration needs Hookaido v2.15.2 or newer.
+  Needs the hookaido binary (pinned v2.15.2; install actions verify SHA256) or
+  the ghcr.io/nuetzliches/hookaido image. Uses curl for HTTP checks.
 metadata:
-  version: "2.15.1"
+  version: "2.15.2"
   openclaw:
     homepage: https://github.com/7schmiede/claw-skill-hookaido
     emoji: "\U0001FA9D"
@@ -41,88 +40,88 @@ metadata:
     install:
       - id: go-install
         kind: go
-        package: github.com/nuetzliches/hookaido/v2/cmd/hookaido@v2.15.1
+        package: github.com/nuetzliches/hookaido/v2/cmd/hookaido@v2.15.2
         bins:
           - hookaido
-        label: Build hookaido v2.15.1 from source (go install, verified by the Go checksum database)
+        label: Build hookaido v2.15.2 from source (go install, verified by the Go checksum database)
       - id: download-darwin-amd64
         kind: download
         os:
           - darwin
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.1/hookaido_v2.15.1_darwin_amd64.tar.gz
-        sha256: 767f514461465211240f43345c5cc8ca9be4713b3fb1e37afdf77ed722bec72c
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.2/hookaido_v2.15.2_darwin_amd64.tar.gz
+        sha256: 3c26c0ae36fa40b7ac2ae61d4f021d0f686e2f158edc98856074fda952929289
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.15.1 (macOS amd64, SHA256-verified)
+        label: Download hookaido v2.15.2 (macOS amd64, SHA256-verified)
       - id: download-darwin-arm64
         kind: download
         os:
           - darwin
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.1/hookaido_v2.15.1_darwin_arm64.tar.gz
-        sha256: 45b51d7449d01246fce6baab1e18e7e38854860d9e81a52106460b33d8a23225
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.2/hookaido_v2.15.2_darwin_arm64.tar.gz
+        sha256: 9f18c14829894a3ecc513b05be785b9c15d3b7e5789190e4757d53e50aa7ad06
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.15.1 (macOS arm64, SHA256-verified)
+        label: Download hookaido v2.15.2 (macOS arm64, SHA256-verified)
       - id: download-linux-amd64
         kind: download
         os:
           - linux
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.1/hookaido_v2.15.1_linux_amd64.tar.gz
-        sha256: ab021b5edae52c46a74e841b7f9801854620781a83bbdc188afc563a097b7cfe
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.2/hookaido_v2.15.2_linux_amd64.tar.gz
+        sha256: de4f3970a45fef360872155dc741c5cf3c780b4a7de8c709481897c381528d5d
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.15.1 (Linux amd64, SHA256-verified)
+        label: Download hookaido v2.15.2 (Linux amd64, SHA256-verified)
       - id: download-linux-arm64
         kind: download
         os:
           - linux
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.1/hookaido_v2.15.1_linux_arm64.tar.gz
-        sha256: 17cc0488a8da240f313d9e4c6400e83812db519ec1f6b27ab3296cefa7894046
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.2/hookaido_v2.15.2_linux_arm64.tar.gz
+        sha256: b58664d5534d70b339bf20b81b2a0f737855a407f84120d51b8716f769323416
         archive: tar.gz
         extract: true
         stripComponents: 1
         targetDir: ~/.local/bin
         bins:
           - hookaido
-        label: Download hookaido v2.15.1 (Linux arm64, SHA256-verified)
+        label: Download hookaido v2.15.2 (Linux arm64, SHA256-verified)
       - id: download-windows-amd64
         kind: download
         os:
           - win32
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.1/hookaido_v2.15.1_windows_amd64.zip
-        sha256: 58b6b2422b8acd6a9a0d47f261999aea4ad4285624918afcd151225213ca2d88
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.2/hookaido_v2.15.2_windows_amd64.zip
+        sha256: 8bd58641a9958d39d9eb19987824d5c27775c383d43064ca9118c092e8a681d6
         archive: zip
         extract: true
         stripComponents: 1
         targetDir: ~/.openclaw/tools/hookaido
         bins:
           - hookaido
-        label: Download hookaido v2.15.1 (Windows amd64, SHA256-verified)
+        label: Download hookaido v2.15.2 (Windows amd64, SHA256-verified)
       - id: download-windows-arm64
         kind: download
         os:
           - win32
-        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.1/hookaido_v2.15.1_windows_arm64.zip
-        sha256: ec830085a26d74c370aff819482bdc2f3bbc9a319ef8e9c5bd3f5d400f403558
+        url: https://github.com/nuetzliches/hookaido/releases/download/v2.15.2/hookaido_v2.15.2_windows_arm64.zip
+        sha256: da9cd74a1ef8fd58332fb34fdfff97229e830c8fdda70f3931e47fdb2558ed59
         archive: zip
         extract: true
         stripComponents: 1
         targetDir: ~/.openclaw/tools/hookaido
         bins:
           - hookaido
-        label: Download hookaido v2.15.1 (Windows arm64, SHA256-verified)
+        label: Download hookaido v2.15.2 (Windows arm64, SHA256-verified)
 ---
 
 # Hookaido
@@ -135,7 +134,7 @@ Work config-first: edit the `Hookaidofile`, format and validate, run, exercise t
 
 Tell the user about these effects before performing them:
 
-- **Binary install (supply chain):** install actions download the pinned `v2.15.1` release archive from `github.com/nuetzliches/hookaido` and verify its `sha256` before extraction. `go install ...@v2.15.1` is verified by the Go checksum database. `bash {baseDir}/scripts/install_hookaido.sh` is the fallback with the same pinned checksums. Never install an unpinned or unverified version; for other versions require `HOOKAIDO_SHA256` taken from the signed release checksum file (`hookaido verify-release`).
+- **Binary install (supply chain):** install actions download the pinned `v2.15.2` release archive from `github.com/nuetzliches/hookaido` and verify its `sha256` before extraction. `go install ...@v2.15.2` is verified by the Go checksum database. `bash {baseDir}/scripts/install_hookaido.sh` is the fallback with the same pinned checksums. Never install an unpinned or unverified version; for other versions require `HOOKAIDO_SHA256` taken from the signed release checksum file (`hookaido verify-release`).
 - **Local execution:** this skill runs `hookaido` CLI commands, `curl` against the operator's own Hookaido and OpenClaw listeners, the optional pull relay (`scripts/openclaw_pull_relay.sh`, talks only to the two configured URLs), and optionally `deliver exec` handlers the operator configured. It sends nothing to third-party services.
 - **Persistent configuration:** writing a `Hookaidofile`, OpenClaw `hooks`/`mcp` config, or an MCP client entry changes persistent state. Ask first, keep MCP registration project-local, and never change global agent settings without explicit consent.
 - **Mutations:** queue/DLQ mutations, config apply, secret rotation, and process control are opt-in (`--enable-mutations`, `--enable-runtime-control`) and need explicit operator intent. DLQ deletion is irreversible.
@@ -155,7 +154,7 @@ Default deployment for internet-facing ingress is pull mode in a DMZ (`dmz-queue
 ## Core Workflow
 
 1. Confirm topology (table above), queue backend (`sqlite` default, `memory` for dev, `postgres` for shared storage), and which provider signs the webhooks.
-2. Ensure `hookaido` is available where commands run: host install action, fallback script, `go install`, or the container image `ghcr.io/nuetzliches/hookaido:2.15.1` (pin by digest in production; see `references/operations.md` → Container).
+2. Ensure `hookaido` is available where commands run: host install action, fallback script, `go install`, or the container image `ghcr.io/nuetzliches/hookaido:2.15.2` (pin by digest in production; see `references/operations.md` → Container).
 3. Edit the `Hookaidofile` minimally. Keep secrets in `env:`/`file:`/`vault:` refs, never inline.
 4. Format and validate before every start or reload:
    - `hookaido config fmt --config ./Hookaidofile`
@@ -216,7 +215,7 @@ Concrete configs, the relay loop, and verification steps: `references/openclaw.m
 
 ## MCP Mode for AI Operations
 
-Requires Hookaido **v2.15.2 or newer** for standard MCP clients (Claude Code, OpenClaw): earlier versions only speak `Content-Length` framing and time out on connect.
+Requires Hookaido **v2.15.2 or newer** (the pinned version) for standard MCP clients such as Claude Code and OpenClaw; earlier versions only speak `Content-Length` framing and time out on connect.
 
 1. Start with `--role read` (config, health, backlog, DLQ, messages, attempts, pull consumers).
 2. Queue mutations only for deliberate work: `--enable-mutations --role operate --principal <identity>`.

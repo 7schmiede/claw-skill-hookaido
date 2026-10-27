@@ -2,15 +2,15 @@
 
 ## GitHub Release Summary
 
-Recommended tag: `v2.15.1`
+Recommended tag: `v2.15.2`
 
-Skill update pinning to upstream Hookaido `v2.15.1`, with OpenClaw Gateway integration as the primary use case, the ClawHub security audit findings fixed, and corrections to outdated or wrong guidance.
+Skill update pinning to upstream Hookaido `v2.15.2` (first release whose MCP server works with standard clients such as Claude Code and OpenClaw), with OpenClaw Gateway integration as the primary use case, the ClawHub security audit findings fixed, and corrections to outdated or wrong guidance.
 
-## v2.15.1 - unreleased
+## v2.15.2 - 2026-10-27
 
 ### Security (ClawHub audit)
 
-- Every `metadata.openclaw.install` download declares `sha256`. Values come from the signed upstream `hookaido_v2.15.1_checksums.txt`; the signature, SBOM and provenance were verified with `hookaido verify-release`.
+- Every `metadata.openclaw.install` download declares `sha256`. Values come from the signed upstream `hookaido_v2.15.2_checksums.txt`; the signature, SBOM and provenance were verified with `hookaido verify-release`.
 - `scripts/publish.sh` pins the ClawHub CLI instead of `clawhub@latest`.
 - New "Installation, Capabilities, and Side Effects" section in `SKILL.md`.
 - MCP registration is project-local (`.mcp.json` / `claude mcp add --scope project`; OpenClaw `mcp.servers` with a read-only `toolFilter`) instead of `.claude/settings.json`, which Claude Code never read MCP servers from.
@@ -36,11 +36,13 @@ Skill update pinning to upstream Hookaido `v2.15.1`, with OpenClaw Gateway integ
 
 ### Changed
 
+- Pinned to Hookaido `v2.15.2`, which fixes MCP stdio framing (nuetzliches/hookaido#321). With v2.15.1 and earlier, `hookaido mcp serve` timed out with Claude Code and OpenClaw.
+
 - Frontmatter follows the Agent Skills format, so `SKILL.md` also uploads to claude.ai:
   - `version` moved to `metadata.version`
   - added `compatibility`
   - tokens moved from `requires.env` (which hid the skill until they were set) to optional `envVars`
-- `go install` path is `github.com/nuetzliches/hookaido/v2/cmd/hookaido@v2.15.1` (module `/v2` since Hookaido v2.8.0).
+- `go install` path is `github.com/nuetzliches/hookaido/v2/cmd/hookaido@v2.15.2` (module `/v2` since Hookaido v2.8.0).
 - Windows install actions use `stripComponents: 1`. Release archives have a top-level folder, so the binary used to land one directory too deep.
 
 ### Fixed (wrong guidance in earlier skill versions)

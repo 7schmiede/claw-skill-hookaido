@@ -1,4 +1,4 @@
-# Hookaido Operations Reference (v2.15.1)
+# Hookaido Operations Reference (v2.15.2)
 
 Concrete syntax for install, CLI, DSL, and APIs. Every config snippet below passes `hookaido config validate` and is in `hookaido config fmt` order. Snippets with `pull` routes also need a `pull_api { auth token ... }` block.
 
@@ -11,14 +11,14 @@ Public repositories:
 
 ### Host binary
 
-- OpenClaw install actions (`metadata.openclaw.install`) download the pinned `v2.15.1` archive for the platform and verify its `sha256` before extraction.
+- OpenClaw install actions (`metadata.openclaw.install`) download the pinned `v2.15.2` archive for the platform and verify its `sha256` before extraction.
   - macOS/Linux extract to `~/.local/bin`.
   - Windows extracts to `~/.openclaw/tools/hookaido`.
   - Archives contain one top-level folder; `stripComponents: 1` removes it.
 - From source (verified by the Go checksum database; the module path has had a `/v2` suffix since v2.8.0):
 
   ```bash
-  go install github.com/nuetzliches/hookaido/v2/cmd/hookaido@v2.15.1
+  go install github.com/nuetzliches/hookaido/v2/cmd/hookaido@v2.15.2
   ```
 
 - Fallback installer with pinned checksums:
@@ -36,9 +36,9 @@ Download the release assets for one version into a directory, then:
 
 ```bash
 hookaido verify-release \
-  --checksums ./hookaido_v2.15.1_checksums.txt \
-  --public-key ./hookaido_v2.15.1_checksums.txt.pub.pem \
-  --signature ./hookaido_v2.15.1_checksums.txt.sig \
+  --checksums ./hookaido_v2.15.2_checksums.txt \
+  --public-key ./hookaido_v2.15.2_checksums.txt.pub.pem \
+  --signature ./hookaido_v2.15.2_checksums.txt.sig \
   --require-signature --require-provenance
 ```
 
@@ -60,7 +60,7 @@ docker run -d --name hookaido \
   -p 8080:8080 -p 9443:9443 \
   -e HOOKAIDO_PULL_TOKEN -e GITHUB_WEBHOOK_SECRET \
   -v "$PWD/config:/app/config:ro" -v hookaido-data:/app/.data \
-  ghcr.io/nuetzliches/hookaido:2.15.1@sha256:5f543f46c663ca320542f33abcfde3d5453065872b82017f50107a4848b254d9 \
+  ghcr.io/nuetzliches/hookaido:2.15.2@sha256:b62e6e23227007d209d63c4234cf150a5bb91074cdede9e6cc4a8638194a1aa0 \
   run --config /app/config/Hookaidofile --db /app/.data/hookaido.db --watch
 ```
 
@@ -70,7 +70,7 @@ docker run -d --name hookaido \
 - OpenClaw Docker sandbox: build a sandbox image that copies the binary from the pinned image instead of downloading at runtime:
 
   ```dockerfile
-  COPY --from=ghcr.io/nuetzliches/hookaido:2.15.1@sha256:5f543f46c663ca320542f33abcfde3d5453065872b82017f50107a4848b254d9 \
+  COPY --from=ghcr.io/nuetzliches/hookaido:2.15.2@sha256:b62e6e23227007d209d63c4234cf150a5bb91074cdede9e6cc4a8638194a1aa0 \
        /usr/local/bin/hookaido /usr/local/bin/hookaido
   ```
 

@@ -7,7 +7,7 @@ Agent skill for [Hookaido](https://github.com/nuetzliches/hookaido), a single-bi
 - deliver events durably to an OpenClaw Gateway or any other consumer
 - triage queues and the DLQ
 
-Pinned to Hookaido `v2.15.1`. MCP client registration needs Hookaido `v2.15.2` or newer.
+Pinned to Hookaido `v2.15.2`.
 
 ## Install
 
@@ -40,7 +40,7 @@ The skill's install actions download the pinned Hookaido release and verify its 
 
 ## Security notes
 
-- Binary downloads are pinned and checksum-verified. The checksums come from the signed upstream `hookaido_v2.15.1_checksums.txt`; the signature, SBOM and provenance were checked with `hookaido verify-release`.
+- Binary downloads are pinned and checksum-verified. The checksums come from the signed upstream `hookaido_v2.15.2_checksums.txt`; the signature, SBOM and provenance were checked with `hookaido verify-release`.
 - The skill only talks to the operator's own Hookaido and OpenClaw endpoints.
 - MCP registration is project-local and read-only by default. Mutations and DLQ deletion need explicit operator intent.
 
