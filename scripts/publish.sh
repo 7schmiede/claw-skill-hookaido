@@ -17,7 +17,7 @@ set -euo pipefail
 #
 # Browse metadata is replaced on every publish, so keep it here rather than
 # editing it on the website: at most 3 category slugs from the fixed ClawHub
-# list, at most 5 free-form topics. Override the changelog with CHANGELOG="...".
+# list, at most 5 free-form topics ("OpenClaw" is reserved by ClawHub). Override the changelog with CHANGELOG="...".
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILL_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -34,7 +34,7 @@ if [[ -z "$VERSION" ]]; then
 fi
 
 CATEGORIES="integrations,automation,operations"
-TOPICS="Webhook,OpenClaw,GitHub,Message Queue,MCP"
+TOPICS="Webhook,GitHub,Stripe,Message Queue,MCP"
 DEFAULT_CHANGELOG="Hookaido ${VERSION}: OpenClaw Gateway integration (push to mapped hooks, pull relay for Gateways behind NAT), SHA256-verified installs, MCP works with Claude Code and OpenClaw, guidance corrected against the current release."
 CHANGELOG="${CHANGELOG:-$DEFAULT_CHANGELOG}"
 
