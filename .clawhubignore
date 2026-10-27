@@ -1,3 +1,4 @@
 scripts/publish.sh
 .clawhubignore
 .gitignore
+.claude-plugin/
