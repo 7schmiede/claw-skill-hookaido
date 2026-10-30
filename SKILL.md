@@ -14,7 +14,7 @@ compatibility: >-
   Needs the hookaido binary (pinned v2.15.2; install actions verify SHA256) or
   the ghcr.io/nuetzliches/hookaido image. Uses curl for HTTP checks.
 metadata:
-  version: "2.15.2"
+  version: "2.15.3"
   openclaw:
     homepage: https://github.com/7schmiede/claw-skill-hookaido
     emoji: "\U0001FA9D"

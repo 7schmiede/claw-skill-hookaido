@@ -13,8 +13,8 @@ set -euo pipefail
 : "${OPENCLAW_HOOK_URL:=http://127.0.0.1:18789/hooks/github}"
 : "${OPENCLAW_HOOKS_TOKEN:?OpenClaw hooks.token}"
 
-body_file="$(mktemp)"
-trap 'rm -f "$body_file"' EXIT
+payload_tmp="$(mktemp)"
+trap 'rm -f "$payload_tmp"' EXIT
 
 pull() {
   curl -sS --fail-with-body -X POST "${HOOKAIDO_PULL_URL}/$1" \
@@ -41,7 +41,7 @@ while true; do
     delivery="$(header "$item" x-github-delivery)"
 
     code=000
-    if jq -j '.payload_b64' <<<"$item" | base64 -d >"$body_file"; then
+    if jq -j '.payload_b64' <<<"$item" | base64 -d >"$payload_tmp"; then
       # Idempotency-Key = Hookaido event id, so a redelivered event replays the
       # earlier OpenClaw run instead of starting a second one.
       code="$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$OPENCLAW_HOOK_URL" \
@@ -50,7 +50,7 @@ while true; do
         -H "Idempotency-Key: ${id}" \
         ${event:+-H "X-GitHub-Event: ${event}"} \
         ${delivery:+-H "X-GitHub-Delivery: ${delivery}"} \
-        --data-binary @"$body_file")" || code=000
+        --data-binary @"$payload_tmp")" || code=000
     fi
 
     case "$code" in
