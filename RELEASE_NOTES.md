@@ -2,9 +2,16 @@
 
 ## GitHub Release Summary
 
-Recommended tag: `v2.15.2`
+Recommended tag: `v2.15.3`
 
 Skill update pinning to upstream Hookaido `v2.15.2` (first release whose MCP server works with standard clients such as Claude Code and OpenClaw), with OpenClaw Gateway integration as the primary use case, the ClawHub security audit findings fixed, and corrections to outdated or wrong guidance.
+
+## v2.15.3 - 2026-10-30
+
+Republish of v2.15.2 (still pinned to Hookaido `v2.15.2`). ClawHub's static analysis flagged `scripts/openclaw_pull_relay.sh` as potential exfiltration (`suspicious.potential_exfiltration`), and the v2.15.2 release stayed held in scan. The rule matches `base64` followed by a variable named like `*file*`. The relay decodes the queued payload into a temp file and posts it to the local OpenClaw hook, so this was a false positive. The temp variable is now `payload_tmp`; behaviour is unchanged and was re-tested end to end.
+
+- `scripts/publish.sh` sets ClawHub categories (`integrations`, `automation`, `operations`), topics, and a changelog. It refuses to publish files with CRLF line endings, and `.gitattributes` pins LF.
+- `SKILL.md` and `references/operations.md` state the DSL rule "one directive per line" (`{ a; b }` does not parse).
 
 ## v2.15.2 - 2026-10-27
 

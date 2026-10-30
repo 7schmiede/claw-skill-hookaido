@@ -10,7 +10,7 @@
       "name": "hookaido",
       "displayName": "Hookaido Webhook Integration",
       "source": "./",
-      "version": "2.15.2",
+      "version": "2.15.3",
       "description": "Operate Hookaido: durable, signature-verifying webhook ingress queue in front of OpenClaw agents and other consumers (config, pull/push delivery, DLQ triage, MCP diagnostics).",
       "author": {
         "name": "7schmiede",
