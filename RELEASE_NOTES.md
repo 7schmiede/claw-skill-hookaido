@@ -2,9 +2,18 @@
 
 ## GitHub Release Summary
 
-Recommended tag: `v2.15.3`
+Recommended tag: `v2.15.4`
 
 Skill update pinning to upstream Hookaido `v2.15.2` (first release whose MCP server works with standard clients such as Claude Code and OpenClaw), with OpenClaw Gateway integration as the primary use case, the ClawHub security audit findings fixed, and corrections to outdated or wrong guidance.
+
+## v2.15.4 - 2026-11-02
+
+Hardening from the ClawHub security audit of 2.15.3. The overall result was "Pass", with ClawScan `benign`. Still pinned to Hookaido `v2.15.2`.
+
+- `scripts/openclaw_pull_relay.sh` refuses plain `http://` for any non-loopback URL. Both URLs carry a bearer token, and a misconfigured public pull URL would have sent the token and webhook data unencrypted. curl is pinned to the checked protocol with `--proto`, so a redirect cannot downgrade it. `HOOKAIDO_RELAY_ALLOW_HTTP=1` is an explicit opt-out for already encrypted hops (Tailscale/WireGuard). Tested: remote `http://` is refused, the opt-out is allowed with a notice, and loopback delivers end to end.
+- Revoking a runtime secret is documented as destructive. Revoking the last valid version empties the pool, so every webhook on the route gets `401`. The skill now requires listing the pool, naming the exact id, and explicit confirmation.
+- The `--dotenv` example uses `./hookaido.env`.
+- All environment variables read by the bundled scripts (relay URLs, `HOOKAIDO_RELAY_ALLOW_HTTP`, installer overrides) are declared as optional `envVars`.
 
 ## v2.15.3 - 2026-10-30
 

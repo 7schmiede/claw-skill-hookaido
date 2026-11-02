@@ -86,7 +86,7 @@ hookaido config diff --context 3 ./Hookaidofile ./Hookaidofile.new
 hookaido run --config ./Hookaidofile --db ./.data/hookaido.db
 hookaido run --config ./Hookaidofile --db ./.data/hookaido.db --watch          # hot reload; SIGHUP also reloads
 hookaido run --config ./Hookaidofile --postgres-dsn "$HOOKAIDO_POSTGRES_DSN"   # postgres backend
-hookaido run --config ./Hookaidofile --dotenv ./.env --log-level info
+hookaido run --config ./Hookaidofile --dotenv ./hookaido.env --log-level info   # KEY=VALUE file for env: refs
 
 hookaido version --long
 hookaido mcp serve --config ./Hookaidofile --db ./.data/hookaido.db --role read
@@ -190,6 +190,7 @@ secrets {
 - Requires `HOOKAIDO_SECRET_ENCRYPTION_KEY` (32 bytes, base64). Back the key up separately from the database.
 - Add a version with `POST /secrets/cituro` and `{"value":"...","not_before":"...","not_after":"..."}`. The response is `201` with an id `sec_...`.
 - List with `GET /secrets/cituro` (metadata only). Revoke with `DELETE /secrets/cituro/{id}`.
+- Revoking is immediate and cannot be undone. List the pool first and never revoke the last version that is valid now: an empty pool rejects every webhook on the route with `401` until the provider's next secret is added. Name the exact id and get explicit operator confirmation before revoking.
 - MCP: `rotate_secret` (admin role plus `--enable-mutations`).
 - Never echo secret values in logs or chat.
 - Watch `hookaido_runtime_secret_pool_versions` and `hookaido_runtime_secret_pool_exhaustion_seconds`. An empty pool rejects every webhook with `401`.

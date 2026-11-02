@@ -113,7 +113,7 @@ pull_api {
 }
 ```
 
-Put TLS in front of `:9443` (or use `pull_api { tls ... }`) before the relay connects over the internet.
+Put TLS in front of `:9443` (or use `pull_api { tls ... }`) before the relay connects over the internet. The relay enforces this: both URLs carry a bearer token, so it refuses to start with a plain `http://` URL unless the host is loopback (`127.0.0.1`, `localhost`, `[::1]`). For a hop the network already encrypts, such as a Tailscale/WireGuard address, set `HOOKAIDO_RELAY_ALLOW_HTTP=1` deliberately.
 
 Relay on the Gateway host (needs `bash`, `curl`, `jq`, `base64`):
 
@@ -127,6 +127,7 @@ bash {baseDir}/scripts/openclaw_pull_relay.sh
 
 Relay behaviour:
 
+- Checks both URLs at startup: `https://`, or `http://` to loopback only (see above). curl is restricted to that protocol (`--proto`), so a redirect cannot downgrade it.
 - Long-polls `dequeue` (batch 10, lease 60 s, wait 25 s).
 - Sends the original body plus `Content-Type`, `X-GitHub-Event` and `X-GitHub-Delivery`.
 - Sets `Idempotency-Key: <hookaido event id>`, so the Gateway replays the earlier run instead of starting a second one when an event is redelivered.
