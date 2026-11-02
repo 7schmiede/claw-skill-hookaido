@@ -14,7 +14,7 @@ compatibility: >-
   Needs the hookaido binary (pinned v2.15.2; install actions verify SHA256) or
   the ghcr.io/nuetzliches/hookaido image. Uses curl for HTTP checks.
 metadata:
-  version: "2.15.3"
+  version: "2.15.4"
   openclaw:
     homepage: https://github.com/7schmiede/claw-skill-hookaido
     emoji: "\U0001FA9D"
@@ -37,6 +37,24 @@ metadata:
       - name: HOOKAIDO_POSTGRES_DSN
         required: false
         description: DSN for the postgres queue backend.
+      - name: HOOKAIDO_PULL_URL
+        required: false
+        description: Pull relay only. Full pull endpoint of the operator's Hookaido (https://, or http:// to loopback).
+      - name: OPENCLAW_HOOK_URL
+        required: false
+        description: Pull relay only. Local OpenClaw mapped hook URL (default http://127.0.0.1:18789/hooks/github).
+      - name: HOOKAIDO_RELAY_ALLOW_HTTP
+        required: false
+        description: Pull relay only. Set to 1 to allow plain http:// to a non-loopback host on an already encrypted network (Tailscale/WireGuard).
+      - name: HOOKAIDO_VERSION
+        required: false
+        description: Fallback installer only. Release tag to install instead of the pinned one; requires HOOKAIDO_SHA256.
+      - name: HOOKAIDO_SHA256
+        required: false
+        description: Fallback installer only. Expected SHA256 of the artifact for a non-default HOOKAIDO_VERSION, taken from the signed release checksums.
+      - name: HOOKAIDO_INSTALL_DIR
+        required: false
+        description: Fallback installer only. Target directory (default ~/.local/bin, or ~/.openclaw/tools/hookaido on Windows).
     install:
       - id: go-install
         kind: go
@@ -135,7 +153,7 @@ Work config-first: edit the `Hookaidofile`, format and validate, run, exercise t
 Tell the user about these effects before performing them:
 
 - **Binary install (supply chain):** install actions download the pinned `v2.15.2` release archive from `github.com/nuetzliches/hookaido` and verify its `sha256` before extraction. `go install ...@v2.15.2` is verified by the Go checksum database. `bash {baseDir}/scripts/install_hookaido.sh` is the fallback with the same pinned checksums. Never install an unpinned or unverified version; for other versions require `HOOKAIDO_SHA256` taken from the signed release checksum file (`hookaido verify-release`).
-- **Local execution:** this skill runs `hookaido` CLI commands, `curl` against the operator's own Hookaido and OpenClaw listeners, the optional pull relay (`scripts/openclaw_pull_relay.sh`, talks only to the two configured URLs), and optionally `deliver exec` handlers the operator configured. It sends nothing to third-party services.
+- **Local execution:** this skill runs `hookaido` CLI commands, `curl` against the operator's own Hookaido and OpenClaw listeners, the optional pull relay (`scripts/openclaw_pull_relay.sh`, talks only to the two configured URLs and requires HTTPS for any non-loopback URL), and optionally `deliver exec` handlers the operator configured. It sends nothing to third-party services.
 - **Persistent configuration:** writing a `Hookaidofile`, OpenClaw `hooks`/`mcp` config, or an MCP client entry changes persistent state. Ask first, keep MCP registration project-local, and never change global agent settings without explicit consent.
 - **Mutations:** queue/DLQ mutations, config apply, secret rotation, and process control are opt-in (`--enable-mutations`, `--enable-runtime-control`) and need explicit operator intent. DLQ deletion is irreversible.
 
@@ -243,7 +261,7 @@ Equivalent CLI: `claude mcp add --scope project hookaido -- hookaido mcp serve -
 1. Read first: `GET /healthz?details=1`, `GET /backlog/trends`, `GET /dlq`, `GET /attempts`.
 2. Find the cause (auth rejects: `hookaido_ingress_auth_rejected_total{route,reason}`; target errors: attempts list) and fix it before requeueing.
 3. Requeue with `POST /dlq/requeue` and an `X-Hookaido-Audit-Reason`; explain expected impact for large batches.
-4. `POST /dlq/delete` is destructive and irreversible: list the exact IDs, get explicit confirmation, prefer requeue when in doubt.
+4. `POST /dlq/delete` and revoking a runtime secret (`DELETE /secrets/{name}/{id}`) are destructive and irreversible: list the exact IDs, get explicit confirmation, prefer requeue when in doubt.
 
 ## Validation Checklist
 

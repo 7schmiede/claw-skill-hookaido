@@ -34,7 +34,7 @@ The skill's install actions download the pinned Hookaido release and verify its 
 - `references/openclaw.md`: Hookaido in front of the OpenClaw Gateway. Covers push to `/hooks/<name>`, the pull relay for a Gateway behind NAT, egress setup, the security checklist, and MCP registration for OpenClaw and Claude Code.
 - `references/operations.md`: install, container, and release verification, plus CLI, DSL patterns, the Pull/SSE/gRPC and Admin APIs, metrics, and secret rotation.
 - `scripts/install_hookaido.sh`: fallback installer for the pinned release with SHA256 verification.
-- `scripts/openclaw_pull_relay.sh`: pull relay from Hookaido to a local OpenClaw hook. It acks only after a `2xx` and sends an `Idempotency-Key`.
+- `scripts/openclaw_pull_relay.sh`: pull relay from Hookaido to a local OpenClaw hook. It acks only after a `2xx`, sends an `Idempotency-Key`, and requires HTTPS for any non-loopback URL.
 - `scripts/publish.sh`: maintainer-only ClawHub publish, with the ClawHub CLI pinned. It is excluded from the published bundle.
 - `.claude-plugin/marketplace.json`: Claude Code marketplace. The entry doubles as the plugin manifest. There is deliberately no `plugin.json`, because ClawHub would then classify the repo as a plugin and refuse `clawhub publish` for the skill.
 
